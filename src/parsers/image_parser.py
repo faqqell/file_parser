@@ -8,6 +8,7 @@ from src.models.models import ContentUnit, ParsedDocument, SourceInfo
 from src.services.normalizer import Normalizer
 from src.services.ocr_service import get_ocr_service
 from src.services.table_serializer import TableSerializer
+from src.core.utils import create_source_info
 
 
 def parse_table_from_ocr_text(text: str) -> Optional[List[List[str]]]:
@@ -106,13 +107,7 @@ def parse_image(file_path: str) -> ParsedDocument:
     
     doc_id = hasher.hexdigest()
     
-    source = SourceInfo(
-        file_name=os.path.basename(file_path),
-        file_path=os.path.abspath(file_path),
-        file_size=os.path.getsize(file_path),
-        created_at=datetime.datetime.fromtimestamp(os.path.getctime(file_path)),
-        updated_at=datetime.datetime.fromtimestamp(os.path.getmtime(file_path))
-    )
+    source = create_source_info(file_path)
     
     return ParsedDocument(
         doc_id=doc_id,
