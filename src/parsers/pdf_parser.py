@@ -8,6 +8,7 @@ from langdetect import detect
 from src.models.models import ContentUnit, ParsedDocument, SourceInfo
 from src.services.normalizer import Normalizer
 from src.services.ocr_service import get_ocr_service
+from src.core.utils import create_source_info
 from src.services.table_serializer import TableSerializer
 
 OCR_FIXES = {
@@ -192,13 +193,7 @@ def parse_pdf(file_path: str, use_ocr: bool = True) -> ParsedDocument:
         warnings.append("Document was processed using OCR fallback.")
     
     doc_id = hasher.hexdigest()
-    source = SourceInfo(
-        file_name=os.path.basename(file_path),
-        file_path=os.path.abspath(file_path),
-        file_size=file_stats.st_size,
-        created_at=datetime.datetime.fromtimestamp(file_stats.st_ctime),
-        updated_at=datetime.datetime.fromtimestamp(file_stats.st_mtime)
-    )
+    source = create_source_info(file_path)
     
     metadata = {
         'language': lang, 
