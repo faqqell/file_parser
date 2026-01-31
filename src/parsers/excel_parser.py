@@ -1,12 +1,11 @@
 import pandas as pd
-import hashlib
-import os
-import datetime
-import openpyxl
+import hashlib, os, datetime, openpyxl
 from typing import List, Any    
 from src.models.models import ContentUnit, ParsedDocument, SourceInfo
 from src.services.table_serializer import TableSerializer
 from src.services.normalizer import Normalizer
+from src.core.utils import create_source_info
+
 def get_cell_value(sheet, cell):
     """
     Возвращает значение ячейки, учитывая объединенные области.
@@ -60,15 +59,8 @@ def parse_excel(file_path:str) -> ParsedDocument:
         order_count+=1
     
     doc_id = content_hasher.hexdigest()
-    file_stats = os.stat(file_path)
     props = wb.properties
-    source = SourceInfo(
-        file_name = os.path.basename(file_path),
-        file_path = os.path.abspath(file_path),
-        file_size = file_stats.st_size,
-        created_at = datetime.datetime.fromtimestamp(file_stats.st_ctime),
-        updated_at = datetime.datetime.fromtimestamp(file_stats.st_mtime)
-    )
+    source = create_source_info(file_path)
     
     metadata = {
 		'language': None,
