@@ -1,0 +1,14 @@
+python-docx
+pydantic
+openpyxl
+pandas
+pypdf
+pdf2image
+easyocr
+langdetect
+Pillow
+numpy<2
+ftfy
+pdfplumber
+pyspellchecker
+pytest
