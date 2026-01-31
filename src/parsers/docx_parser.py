@@ -10,6 +10,7 @@ from langdetect import detect
 from src.models.models import ContentUnit, ParsedDocument, SourceInfo
 from src.services.table_serializer import TableSerializer
 from src.services.normalizer import Normalizer
+from src.core.utils import create_source_info
 
 def parse_docx(file_path: str) -> ParsedDocument:
     doc = Document(file_path)
@@ -83,21 +84,14 @@ def parse_docx(file_path: str) -> ParsedDocument:
         pass
 
     doc_id = content_hasher.hexdigest()
-
-    source = SourceInfo(
-            file_name=os.path.basename(file_path),
-            file_path=os.path.abspath(file_path),
-            file_size=os.path.getsize(file_path), 
-            created_at=datetime.datetime.fromtimestamp(os.path.getctime(file_path)),
-            updated_at=datetime.datetime.fromtimestamp(os.path.getmtime(file_path))
-        )
+    source = create_source_info(file_path)
     
     metadata = {
-        "language": detected_lang,
-        "author": doc.core_properties.author or None,
-        "title": doc.core_properties.title or None,
-        "pages_count": None,
-        "warnings": [],
+        'language': detected_lang,
+        'author': doc.core_properties.author,
+        'title': doc.core_properties.title,
+        'pages_count': None, 
+        'warnings': []
     }
     
     return ParsedDocument(
